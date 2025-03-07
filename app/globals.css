@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @theme {
+  --default-font-family: InterVF;
+  --font-spacegrotes: SpaceGrot;
+
   --color-primary-100: #fff1e6;
   --color-primary-500: #ff7000;
 
@@ -28,6 +31,16 @@
   --shadow-dark-200: 2px 0px 20px 0px rgba(39, 36, 36, 0.04);
 
   --breakpoint-xs: 420px;
+}
+
+@font-face {
+  font-family: InterVF;
+  src: url("./fonts/InterVF.ttf");
+}
+
+@font-face {
+  font-family: SpaceGrot;
+  src: url("./fonts/SpaceGroteskVF.ttf");
 }
 
 @utility dark-gradient {
