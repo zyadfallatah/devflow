@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
+import NavBar from "@/components/navigation/navbar";
 
 export const metadata: Metadata = {
   title: "DevFlow",
@@ -16,8 +18,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={` antialiased`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={` antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NavBar />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
