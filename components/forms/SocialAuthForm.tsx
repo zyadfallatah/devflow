@@ -43,7 +43,7 @@ const SocialAuthForm = () => {
         />
         <span>Log in with Google</span>
       </Button>
-      <Button onClick={() => signOut()}>Signout</Button>
+      {/* <Button onClick={() => signOut()}>Signout</Button> */}
     </div>
   );
 };
