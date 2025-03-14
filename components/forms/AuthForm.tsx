@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import ROUTES from "@/constant/routes";
+import ROUTES from "@/constants/routes";
 import Link from "next/link";
 
 interface AuthProps<T extends FieldValues> {

@@ -1,3 +1,4 @@
+import DesktopNavigation from "@/components/navigation/navbar/DesktopNavigation";
 import NavBar from "@/components/navigation/navbar";
 
 export default function RootLayout({
@@ -9,7 +10,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={` antialiased`}>
         <NavBar />
-        {children}
+        <div className="flex pt-[84px]">
+          <DesktopNavigation />
+          {children}
+        </div>
       </body>
     </html>
   );

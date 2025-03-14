@@ -3,7 +3,7 @@ import { signIn, signOut } from "next-auth/react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
-import ROUTES from "@/constant/routes";
+import ROUTES from "@/constants/routes";
 
 const SocialAuthForm = () => {
   const handleSignIn = async (provider: "github" | "google") => {
