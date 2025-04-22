@@ -56,9 +56,14 @@ const Home = async ({ searchParams }: Searcharams) => {
 
   const filteredQuestions = questions.filter((question) => {
     if (query === "" && filter === "") return true;
-    const matchQuery = question.title.includes(query.toLowerCase());
-    const matchFilters = question.tags[0].name.includes(filter.toLowerCase());
-    return matchFilters && matchQuery;
+    const matchQuery = question.title
+      .toLowerCase()
+      .includes(query.toLowerCase());
+    const matchFilters = question.tags[0].name
+      .toLowerCase()
+      .includes(filter.toLowerCase());
+    console.log(`Query: ${matchQuery}`, `Filters: ${matchFilters}`);
+    return matchQuery && matchFilters;
   });
 
   return (
