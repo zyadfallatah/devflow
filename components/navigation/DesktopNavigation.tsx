@@ -7,8 +7,8 @@ import Link from "next/link";
 const DesktopNavigation = () => {
   return (
     <nav
-      className="hidden sticky sm:flex flex-col min-h-screen background-light900_dark200  shadow-md h-[calc(100vh-80px)] 
-    border-none w-[105px] lg:w-[266px] gap-4 pt-36 items-start justify-between px-5 pb-6 "
+      className="hidden sticky sm:flex flex-col min-h-screen background-light900_dark200 shadow-md h-[calc(100vh-80px)] 
+    border-none w-[105px] lg:w-[266px] gap-4 pt-36 items-start justify-between px-5 pb-6 left-0 top-0"
     >
       <section className="flex flex-col w-full gap-3.5">
         <NavLinks />
