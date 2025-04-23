@@ -13,7 +13,7 @@ export default function RootLayout({
         <NavBar />
         <div className="flex">
           <DesktopNavigation />
-          <section className="flex min-h-screen flex-1 flex-col px-6 pb-6 pt-36 max-md:pb-14 sm:px-14">
+          <section className="flex min-h-screen flex-1 flex-col px-6 pb-6 pt-36 max-md:pb-14 sm:px-14 left-0 top-0">
             <div className="mx-auto w-full max-w-5xl">{children}</div>
           </section>
           <RightSidebar />
