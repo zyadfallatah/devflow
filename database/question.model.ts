@@ -31,6 +31,6 @@ const QuestionSchema = new Schema(
   }
 );
 
-const User = models?.user || model<IQuestion>("Question", QuestionSchema);
+const User = models?.Question || model<IQuestion>("Question", QuestionSchema);
 
 export default User;
