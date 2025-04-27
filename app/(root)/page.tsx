@@ -62,7 +62,6 @@ const Home = async ({ searchParams }: Searcharams) => {
     const matchFilters = question.tags[0].name
       .toLowerCase()
       .includes(filter.toLowerCase());
-    console.log(`Query: ${matchQuery}`, `Filters: ${matchFilters}`);
     return matchQuery && matchFilters;
   });
 
