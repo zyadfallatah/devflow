@@ -5,6 +5,7 @@ import ROUTES from "@/constants/routes";
 import LocalSearch from "@/components/search/LocalSearch";
 import HomeFilter from "@/components/filters/HomeFilters";
 import QuestionCard from "@/components/cards/QuestionCard";
+import handleError from "@/lib/handlers/error";
 
 const questions = [
   {
@@ -53,7 +54,6 @@ interface Searcharams {
 
 const Home = async ({ searchParams }: Searcharams) => {
   const { query = "", filter = "" } = await searchParams;
-
   const filteredQuestions = questions.filter((question) => {
     if (query === "" && filter === "") return true;
     const matchQuery = question.title.includes(query.toLowerCase());
