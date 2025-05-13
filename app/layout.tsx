@@ -26,8 +26,8 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
           href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
         />
       </head>
-      <SessionProvider session={session}>
-        <body className={` antialiased`}>
+      <body className="antialiased">
+        <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -37,8 +37,8 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             {children}
           </ThemeProvider>
           <Toaster richColors />
-        </body>
-      </SessionProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 };
