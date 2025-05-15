@@ -17,7 +17,7 @@ const UserSchema = new Schema(
     username: { type: String, required: true },
     email: { type: String, required: true },
     bio: { type: String },
-    image: { type: String, required: true },
+    image: { type: String },
     location: { type: String },
     portofolio: { type: String },
     reputation: { type: Number, default: 0 },
