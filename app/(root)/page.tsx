@@ -6,6 +6,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import HomeFilter from "@/components/filters/HomeFilters";
 import QuestionCard from "@/components/cards/QuestionCard";
 import handleError from "@/lib/handlers/error";
+import { api } from "@/lib/api";
 
 const questions = [
   {
@@ -51,6 +52,14 @@ const questions = [
 interface Searcharams {
   searchParams: Promise<{ [key: string]: string }>;
 }
+
+// const test = async () => {
+//   try {
+//     return await api.users.getAll();
+//   } catch (error) {
+//     return handleError(error);
+//   }
+// };
 
 const Home = async ({ searchParams }: Searcharams) => {
   const { query = "", filter = "" } = await searchParams;
