@@ -53,14 +53,6 @@ interface Searcharams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
-// const test = async () => {
-//   try {
-//     return await api.users.getAll();
-//   } catch (error) {
-//     return handleError(error);
-//   }
-// };
-
 const Home = async ({ searchParams }: Searcharams) => {
   const { query = "", filter = "" } = await searchParams;
   const filteredQuestions = questions.filter((question) => {
