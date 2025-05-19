@@ -24,7 +24,7 @@ interface Question {
 
 type ActionResponse<T = null> = {
   success: boolean;
-  data: T;
+  data?: T;
   error?: {
     message: string;
     details: Record<string, string[]>;
@@ -36,7 +36,7 @@ type SuccessResponse<T = null> = ActionResponse<T> & {
   success: true;
 };
 
-type ErrorResponse<T = null> = ActionResponse<undefined> & {
+type ErrorResponse = ActionResponse<null> & {
   success: false;
 };
 
