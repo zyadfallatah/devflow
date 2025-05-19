@@ -3,7 +3,9 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
+import dbConnect from "@/lib/mongoose";
+import handleError from "@/lib/handlers/error";
 
 export const metadata: Metadata = {
   title: "DevFlow",
@@ -13,6 +15,12 @@ export const metadata: Metadata = {
     icon: "/images/site-logo.svg",
   },
 };
+
+try {
+  await dbConnect();
+} catch (error) {
+  handleError(error);
+}
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
