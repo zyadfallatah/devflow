@@ -18,7 +18,7 @@ const QuestionSchema = new Schema(
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    tags: [{ type: Schema.Types.ObjectId, ref: "Tag", required: true }],
+    tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
     upvotes: { type: Number, default: 0 },
     downvotes: { type: Number, default: 0 },
     views: { type: Number, default: 0 },

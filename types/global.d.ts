@@ -36,7 +36,7 @@ type SuccessResponse<T = null> = ActionResponse<T> & {
   success: true;
 };
 
-type ErrorResponse = ActionResponse<null> & {
+type ErrorResponse = ActionResponse<undefined> & {
   success: false;
 };
 
@@ -45,3 +45,8 @@ type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> =
   | NextResponse<SuccessResponse<T>>
   | NextResponse<ErrorResponse>;
+
+interface RouteParams {
+  params: Promise<Record<string, string>>;
+  serachParams: Promise<Record<string, string>>;
+}
