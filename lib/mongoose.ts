@@ -1,5 +1,6 @@
 import { changeWith } from "@mdxeditor/editor";
 import mongoose, { Mongoose } from "mongoose";
+import "@/database";
 import logger from "./logger";
 
 const mongooseURI = process.env.MONGODB_URI as string;

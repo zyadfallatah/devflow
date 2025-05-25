@@ -145,3 +145,21 @@ export const SignInWithOAuthSchema = z.object({
       .optional(),
   }),
 });
+
+export const PaginatedSearchParamsSchema = z.object({
+  page: z
+    .number()
+    .int()
+    .min(1, { message: "Page must be greater than 0" })
+    .positive()
+    .default(1),
+  pageSize: z
+    .number()
+    .int()
+    .min(1, { message: "Page size must be greater than 0" })
+    .positive()
+    .default(10),
+  query: z.string().optional(),
+  filter: z.string().optional(),
+  sort: z.string().optional(),
+});
