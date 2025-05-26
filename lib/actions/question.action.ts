@@ -243,8 +243,6 @@ export async function getQuestions(
       { content: { $regex: new RegExp(query, "i") } },
     ];
   }
-  logger.info(query);
-  logger.info(filterQuery.$or);
 
   let sortCriteria = {};
 
