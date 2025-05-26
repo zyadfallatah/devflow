@@ -19,6 +19,7 @@ import Question from "@/database/question.model";
 import Tag, { ITag } from "@/database/tag.model";
 import TagQuestion from "@/database/tag-question.model";
 import { UnauthorizedError } from "../http-errors";
+import logger from "../logger";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -238,14 +239,16 @@ export async function getQuestions(
 
   if (query) {
     filterQuery.$or = [
-      { title: { $regex: new RegExp(`^${query}$`, "i") } },
-      { content: { $regex: new RegExp(`^${query}$`, "i") } },
+      { title: { $regex: new RegExp(query, "i") } },
+      { content: { $regex: new RegExp(query, "i") } },
     ];
   }
+  logger.info(query);
+  logger.info(filterQuery.$or);
 
   let sortCriteria = {};
 
-  switch (filter) {
+  switch (sort) {
     case "newest":
       sortCriteria = { createdAt: -1 };
       break;
