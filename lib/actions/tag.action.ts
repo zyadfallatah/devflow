@@ -8,9 +8,7 @@ import action from "../handlers/action";
 import { PaginatedSearchParamsSchema } from "../validation";
 import handleError from "../handlers/error";
 import Tag, { ITag } from "@/database/tag.model";
-import { Question } from "@/database";
 import { FilterQuery } from "mongoose";
-import { create } from "domain";
 
 export async function getTags(
   params: PaginatedSearchParams

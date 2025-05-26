@@ -49,7 +49,7 @@ type APIResponse<T = null> =
 
 interface RouteParams {
   params: Promise<Record<string, string>>;
-  serachParams: Promise<Record<string, string>>;
+  searchParams: Promise<Record<string, string>>;
 }
 
 interface PaginatedSearchParams {

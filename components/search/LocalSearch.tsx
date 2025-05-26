@@ -11,9 +11,16 @@ interface Props {
   imgSrc: string;
   placeholder: string;
   otherClasses?: string;
+  iconPostion?: "left" | "right";
 }
 
-const LocalSearch = ({ imgSrc, route, placeholder, otherClasses }: Props) => {
+const LocalSearch = ({
+  imgSrc,
+  route,
+  placeholder,
+  iconPostion = "left",
+  otherClasses,
+}: Props) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -54,13 +61,15 @@ const LocalSearch = ({ imgSrc, route, placeholder, otherClasses }: Props) => {
         otherClasses
       )}
     >
-      <Image
-        src={imgSrc}
-        alt="search "
-        className="cursor-pointer"
-        width={24}
-        height={24}
-      />
+      {iconPostion === "left" && (
+        <Image
+          src={imgSrc}
+          alt="search "
+          className="cursor-pointer"
+          width={24}
+          height={24}
+        />
+      )}
       <Input
         type="text"
         placeholder={placeholder}
@@ -68,6 +77,15 @@ const LocalSearch = ({ imgSrc, route, placeholder, otherClasses }: Props) => {
         onChange={(e) => setSearchQuery(e.currentTarget.value)}
         className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-none"
       />
+      {iconPostion === "right" && (
+        <Image
+          src={imgSrc}
+          alt="search "
+          className="cursor-pointer"
+          width={24}
+          height={24}
+        />
+      )}
     </div>
   );
 };
