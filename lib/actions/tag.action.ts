@@ -14,6 +14,7 @@ import handleError from "../handlers/error";
 import Tag, { ITag } from "@/database/tag.model";
 import { FilterQuery } from "mongoose";
 import { Question } from "@/database";
+import { GetTagQuestionsParams } from "@/types/action";
 
 export async function getTags(
   params: PaginatedSearchParams
@@ -89,7 +90,7 @@ export async function getTags(
 export async function getTagQuestions(
   params: GetTagQuestionsParams
 ): Promise<
-  ActionResponse<{ tag: ITag[]; questions: QuestionType[]; isNext: boolean }>
+  ActionResponse<{ tag: ITag; questions: QuestionType[]; isNext: boolean }>
 > {
   const validationResult = await action({
     params,

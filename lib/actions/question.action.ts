@@ -20,6 +20,11 @@ import Tag, { ITag } from "@/database/tag.model";
 import TagQuestion from "@/database/tag-question.model";
 import { UnauthorizedError } from "../http-errors";
 import logger from "../logger";
+import {
+  CreateQuestionParams,
+  EditQuestionParams,
+  GetQuestionParams,
+} from "@/types/action";
 
 export async function createQuestion(
   params: CreateQuestionParams
