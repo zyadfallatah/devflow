@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import UserAvatar from "./UserAvatar";
+import { cn } from "@/lib/utils";
 
 interface Props {
   imgUrl: string;
@@ -13,6 +14,7 @@ interface Props {
   textStyles: string;
   imgStyles?: string;
   isAuthor?: boolean;
+  titleStyles?: string;
 }
 
 const Metric = ({
@@ -24,6 +26,7 @@ const Metric = ({
   textStyles,
   imgStyles,
   isAuthor,
+  titleStyles,
 }: Props) => {
   let intials;
   if (isNaN(Number(value)))
@@ -56,11 +59,11 @@ const Metric = ({
       <p className={`${textStyles} flex items-center gap-1`}>
         <span>{value}</span>
 
-        <span
-          className={`small-regular line-clamp-1 ${isAuthor ? "max-sm:hidden" : ""}`}
-        >
-          {title}
-        </span>
+        {title && (
+          <span className={cn(`small-regular line-clamp-1`, titleStyles)}>
+            {title}
+          </span>
+        )}
       </p>
     </>
   );
