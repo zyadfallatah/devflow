@@ -50,9 +50,7 @@ type ErrorResponse = ActionResponse<undefined> & {
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 
-type APIResponse<T = null> =
-  | NextResponse<SuccessResponse<T>>
-  | NextResponse<ErrorResponse>;
+type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
 
 interface RouteParams {
   params: Promise<Record<string, string>>;
