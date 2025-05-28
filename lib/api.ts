@@ -1,4 +1,4 @@
-import { APIResponse } from "@/types/global";
+import { ActionResponse, APIResponse } from "@/types/global";
 import { fetchHandler } from "./handlers/fetch";
 import { SignInWithOAuthParams } from "@/types/action";
 
@@ -61,10 +61,14 @@ export const api = {
       fetchHandler(`${API_BASE_URL}/accounts/${id}`, { method: "DELETE" }),
   },
   ai: {
-    getAnswer: (question: string, content: string) =>
+    getAnswer: (
+      question: string,
+      content: string,
+      userAnswer: string
+    ): Promise<ActionResponse<string>> =>
       fetchHandler(`${API_BASE_URL}/ai/answers`, {
         method: "POST",
-        body: JSON.stringify({ question, content }),
+        body: JSON.stringify({ question, content, userAnswer }),
       }),
   },
 };

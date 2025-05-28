@@ -20,15 +20,24 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { api } from "@/lib/api";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
   loading: () => <div>Loading editor...</div>,
 });
 
-const AnswerForm = ({ questionId }: { questionId: string }) => {
+interface Props {
+  questionId: string;
+  questionTitle: string;
+  questionContent: string;
+}
+
+const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setisAISubmitting] = useState(false);
+  const session = useSession();
 
   const editorRef = useRef<MDXEditorMethods>(null);
 
@@ -51,11 +60,58 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         toast.success("Success", {
           description: "Answer created successfully",
         });
+        if (editorRef.current) {
+          editorRef.current.setMarkdown("");
+        }
         return;
       }
       toast.error("Error", { description: result.error?.message });
     });
   };
+
+  const genterateAIAnswer = async () => {
+    if (session.status !== "authenticated") {
+      return toast.error("Error", {
+        description: "Please sign in to generate AI answer.",
+      });
+    }
+    setisAISubmitting(true);
+    const userAnswer = editorRef.current?.getMarkdown();
+    try {
+      const { success, data, error } = await api.ai.getAnswer(
+        questionTitle,
+        questionContent,
+        userAnswer || ""
+      );
+      if (!success || !data) {
+        return toast.error("Error", {
+          description: error?.message,
+        });
+      }
+
+      const formattedAnswer = data.replace(/<br>/g, " ");
+
+      if (editorRef.current) {
+        editorRef.current.setMarkdown(formattedAnswer);
+        form.setValue("content", formattedAnswer);
+        form.trigger();
+      }
+
+      toast.success("Success", {
+        description: "AI Answer created successfully",
+      });
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong your request",
+      });
+    } finally {
+      setisAISubmitting(false);
+    }
+  };
+
   return (
     <Form {...form}>
       <div>
@@ -66,6 +122,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
           <Button
             className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
             disabled={isAISubmitting}
+            onClick={genterateAIAnswer}
           >
             {isAISubmitting ? (
               <>
@@ -98,7 +155,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
                 <FormControl>
                   <Editor
                     value={field.value}
-                    editorRef={field.ref}
+                    editorRef={editorRef}
                     fieldChange={field.onChange}
                   />
                 </FormControl>

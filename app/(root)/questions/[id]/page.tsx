@@ -109,7 +109,11 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       </section>
       <section className="my-5">
         {session ? (
-          <AnswerForm questionId={question._id} />
+          <AnswerForm
+            questionId={question._id}
+            questionTitle={question.title}
+            questionContent={question.content}
+          />
         ) : (
           <div className="flex flex-col gap-5 justify-center items-center">
             <p className="body-semibold text-dark300_light700 !text-3xl mt-5">
