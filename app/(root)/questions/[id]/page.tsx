@@ -1,8 +1,10 @@
+import { auth } from "@/auth";
 import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
 import AnswerForm from "@/components/forms/AnswerForm";
 import Metric from "@/components/Metric";
+import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
 import { getAnswers } from "@/lib/actions/answer.action";
@@ -14,6 +16,7 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import React from "react";
 const QuestionDetails = async ({ params }: RouteParams) => {
+  const session = await auth();
   const { id } = await params;
   const { success, data: question } = await getQuestion({ questionId: id });
 
@@ -105,7 +108,20 @@ const QuestionDetails = async ({ params }: RouteParams) => {
         />
       </section>
       <section className="my-5">
-        <AnswerForm questionId={question._id} />
+        {session ? (
+          <AnswerForm questionId={question._id} />
+        ) : (
+          <div className="flex flex-col gap-5 justify-center items-center">
+            <p className="body-semibold text-dark300_light700 !text-3xl mt-5">
+              Sign In to Answer
+            </p>
+            <Link href={ROUTES.SIGN_IN}>
+              <Button className="primary-gradient text-light-900">
+                Sign In
+              </Button>
+            </Link>
+          </div>
+        )}
       </section>
     </>
   );
