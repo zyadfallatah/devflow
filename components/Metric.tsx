@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import UserAvatar from "./UserAvatar";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -25,7 +23,6 @@ const Metric = ({
   href,
   textStyles,
   imgStyles,
-  isAuthor,
   titleStyles,
 }: Props) => {
   let intials;

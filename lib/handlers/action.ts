@@ -7,8 +7,8 @@ import { auth } from "@/auth";
 import dbConnect from "../mongoose";
 
 type ActionOptions<T> = {
-  params?: T;
-  schema?: ZodSchema<T>;
+  params: T;
+  schema: ZodSchema<T>;
   authorize?: boolean;
 };
 
