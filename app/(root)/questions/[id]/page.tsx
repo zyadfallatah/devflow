@@ -96,11 +96,6 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
         ))}
       </div>
-
-      <section className="my-5">
-        <AnswerForm questionId={question._id} />
-      </section>
-
       <section className="my-5">
         <AllAnswers
           data={answersResponse?.answers}
@@ -108,6 +103,9 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           error={answersError}
           totalAnswers={answersResponse?.totalAnswers!}
         />
+      </section>
+      <section className="my-5">
+        <AnswerForm questionId={question._id} />
       </section>
     </>
   );
