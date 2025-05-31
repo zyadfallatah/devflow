@@ -18,6 +18,8 @@ import { UnauthorizedError } from "../http-errors";
 import mongoose, { ClientSession } from "mongoose";
 import Vote from "@/database/vote.model";
 import { Question } from "@/database";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -80,10 +82,9 @@ export async function createVote(
   try {
     const existingVote = await Vote.findOne({
       author: userId,
-      type: targetType,
-      voteType,
+      actionId: targetId,
+      actionType: targetType,
     }).session(session);
-
     if (existingVote) {
       if (existingVote.voteType === voteType) {
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
@@ -105,6 +106,15 @@ export async function createVote(
         await updateVoteCount(
           {
             targetId,
+            targetType: targetType,
+            voteType: existingVote.voteType,
+            change: -1,
+          },
+          session
+        );
+        await updateVoteCount(
+          {
+            targetId,
             targetType,
             voteType,
             change: 1,
@@ -117,7 +127,8 @@ export async function createVote(
         [
           {
             author: userId,
-            type: targetType,
+            actionId: targetId,
+            actionType: targetType,
             voteType,
           },
         ],
@@ -135,6 +146,7 @@ export async function createVote(
     }
 
     await session.commitTransaction();
+    revalidatePath(ROUTES.QUESTION(targetId));
     return { success: true };
   } catch (error) {
     session.abortTransaction();
@@ -166,9 +178,7 @@ export async function hasVoted(
     const vote = await Vote.findOne({
       author: userId,
       actionId: targetId,
-      type: targetType,
     });
-
     if (!vote) {
       return {
         success: false,
