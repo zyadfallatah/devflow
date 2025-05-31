@@ -17,7 +17,7 @@ import handleError from "../handlers/error";
 import { UnauthorizedError } from "../http-errors";
 import mongoose, { ClientSession } from "mongoose";
 import Vote from "@/database/vote.model";
-import { Question } from "@/database";
+import { Answer, Question } from "@/database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 
@@ -36,7 +36,7 @@ export async function updateVoteCount(
 
   const { targetId, targetType, voteType, change } = validationParams.params;
 
-  const Model = targetType === "question" ? Question : Vote;
+  const Model = targetType === "question" ? Question : Answer;
   const voteField = voteType === "upvote" ? "upvotes" : "downvotes";
 
   try {
