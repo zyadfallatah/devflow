@@ -26,17 +26,16 @@ const UserAvatar = ({
     .slice(0, 2);
   return (
     <Link href={ROUTES.PROFILE(id)}>
-      {imageUrl ? (
-        <Image
-          src={imageUrl}
-          width={36}
-          height={36}
-          alt="avatar"
-          className="object-cover rounded-full"
-          quality={100}
-        />
-      ) : (
-        <Avatar>
+      <Avatar className={cn("relative", className)}>
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            fill
+            alt="avatar"
+            className="object-cover rounded-full"
+            quality={100}
+          />
+        ) : (
           <AvatarFallback
             className={cn(
               "primary-gradient font-spce-grotesk font-bold tracking-wide text-white",
@@ -45,8 +44,8 @@ const UserAvatar = ({
           >
             {intials}
           </AvatarFallback>
-        </Avatar>
-      )}
+        )}
+      </Avatar>
     </Link>
   );
 };

@@ -53,3 +53,9 @@ export const EMPTY_ANSWERS = {
   message:
     "The answer board is empty. Maybe it’s waiting for your brilliant answer to get things rolling",
 };
+
+export const EMPTY_USERS = {
+  title: "No Users Found",
+  message:
+    "The user board is empty. Maybe it’s waiting for your brilliant user to get things rolling",
+};
