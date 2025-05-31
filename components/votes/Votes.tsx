@@ -46,9 +46,9 @@ const Votes = ({ upvotes, downvotes, hasUpvoted, hasDownvoted }: Props) => {
 
   return (
     <div className="flex-center gap-2.5">
-      <div className="flex-center gap-1.5">
+      <div className="flex-center gap-0.5">
         <Image
-          src={hasDownvoted ? "/icons/downvoted.svg" : "/icons/downvote.svg"}
+          src={hasUpvoted ? "/icons/upvoted.svg" : "/icons/upvote.svg"}
           alt="upvote icon"
           width={18}
           height={18}
@@ -57,7 +57,7 @@ const Votes = ({ upvotes, downvotes, hasUpvoted, hasDownvoted }: Props) => {
           onClick={() => !isLoading && handleVote("upvote")}
         />
 
-        <div className="flex-center backgorund-light-700_dark400 min-w-5 rounded-sm p-5">
+        <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
           <p className="subtle-medium text-dark400_light900">
             {formatNumber(upvotes)}
           </p>
@@ -74,7 +74,7 @@ const Votes = ({ upvotes, downvotes, hasUpvoted, hasDownvoted }: Props) => {
           onClick={() => !isLoading && handleVote("downvote")}
         />
 
-        <div className="flex-center backgorund-light-700_dark400 min-w-5 rounded-sm p-5">
+        <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
           <p className="subtle-medium text-dark400_light900">
             {formatNumber(downvotes)}
           </p>
