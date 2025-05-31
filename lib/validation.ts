@@ -212,3 +212,8 @@ export const UpdateVoteCountSchema = CreateVoteSchema.extend({
     .int()
     .min(-1, { message: "Change must be greater than 0" }),
 });
+
+export const HasVotedSchema = CreateVoteSchema.pick({
+  targetId: true,
+  targetType: true,
+});
