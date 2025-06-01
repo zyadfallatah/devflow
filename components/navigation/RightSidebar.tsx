@@ -70,9 +70,7 @@ const RightSidebar = async () => {
           )}
           {tags &&
             tags.map((tag) => {
-              return (
-                <TagCard key={tag._id} {...tag} compact isButton showCount />
-              );
+              return <TagCard key={tag._id} {...tag} compact showCount />;
             })}
         </div>
       </div>
