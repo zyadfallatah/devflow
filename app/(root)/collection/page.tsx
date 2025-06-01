@@ -6,6 +6,7 @@ import { getSavedQuestions } from "@/lib/actions/collection.action";
 import ROUTES from "@/constants/routes";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { CollectionFilters } from "@/constants/filters";
+import Pagination from "@/components/Pagination";
 
 interface Searcharams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -21,7 +22,7 @@ const Collection = async ({ searchParams }: Searcharams) => {
     filter: filter || "",
   });
 
-  const { collection } = data || {};
+  const { collection, isNext } = data || {};
 
   return (
     <>
@@ -51,6 +52,8 @@ const Collection = async ({ searchParams }: Searcharams) => {
           </div>
         )}
       />
+
+      <Pagination page={page} isNext={isNext || false} />
     </>
   );
 };
