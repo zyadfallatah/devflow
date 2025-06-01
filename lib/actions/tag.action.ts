@@ -56,7 +56,7 @@ export async function getTags(
       sortCriteria = { createdAt: -1 };
       break;
     case "oldest":
-      sortCriteria = { createdAt: -1 };
+      sortCriteria = { createdAt: 1 };
       break;
     case "name":
       sortCriteria = { name: 1 };

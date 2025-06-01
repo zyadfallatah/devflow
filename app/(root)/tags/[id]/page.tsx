@@ -1,5 +1,6 @@
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
+import CommonFilter from "@/components/filters/CommonFilter";
 import HomeFilter from "@/components/filters/HomeFilters";
 import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
@@ -28,7 +29,7 @@ const TagDetail = async ({ params, searchParams }: RouteParams) => {
         <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
           <h1 className="h1-bold text-dark100_light900">{tag?.name}</h1>
         </section>
-        <section className="mt-11">
+        <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
           <LocalSearch
             route={ROUTES.TAG(id)}
             imgSrc="/icons/search.svg"

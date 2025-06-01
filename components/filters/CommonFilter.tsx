@@ -39,14 +39,14 @@ const CommonFilter = ({
     router.push(newUrl, { scroll: false });
   };
   return (
-    <div className={cn("relative", containerClasses)}>
+    <div className={cn("relative flex", containerClasses)}>
       <Select
         onValueChange={handleUpdateParams}
         defaultValue={paramsFilter || undefined}
       >
         <SelectTrigger
           className={cn(
-            "body-regular no-focus light-border backgorund-light800_dark300 text-dark500_light700 border px-5 py-2.5",
+            "body-regular no-focus light-border backgorund-light800_dark300 text-dark500_light700 border px-5 py-2.5 flex-1",
             otherClasses
           )}
         >
@@ -58,7 +58,7 @@ const CommonFilter = ({
           <SelectGroup>
             {filters.map((filter) => (
               <SelectItem key={filter.value} value={filter.value}>
-                {filter.value}
+                {filter.name}
               </SelectItem>
             ))}
           </SelectGroup>

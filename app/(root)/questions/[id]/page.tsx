@@ -18,10 +18,12 @@ import { RouteParams } from "@/types/global";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import React, { Suspense } from "react";
-const QuestionDetails = async ({ params }: RouteParams) => {
+import { Suspense } from "react";
+
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const session = await auth();
   const { id } = await params;
+  const { page, pageSize, filter } = await searchParams;
   const { success, data: question } = await getQuestion({ questionId: id });
 
   if (!success || !question) {
@@ -34,9 +36,9 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     error: answersError,
   } = await getAnswers({
     questionId: id,
-    page: 1,
-    pageSize: 10,
-    filter: "latest",
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    filter: filter || "latest",
   });
 
   after(async () => {
