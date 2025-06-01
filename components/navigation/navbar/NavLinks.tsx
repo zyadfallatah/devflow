@@ -2,7 +2,9 @@
 
 import { SheetClose } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
+import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -15,6 +17,7 @@ const NavLinks = ({
   isMobileNav?: boolean;
   userId?: string;
 }) => {
+  const session = useSession();
   const pathname = usePathname();
 
   return (
@@ -28,6 +31,12 @@ const NavLinks = ({
           if (userId) item.route = `${item.route}/${userId}`;
           else return null;
         }
+
+        if (
+          item.route === ROUTES.COLLECTION &&
+          session.status === "unauthenticated"
+        )
+          return null;
 
         const LinkComponent = (
           <Link
