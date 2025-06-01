@@ -15,15 +15,18 @@ const topQuesitons = [
 ];
 
 const RightSidebar = async () => {
-  const { data } = await getTags({
-    filter: "popular",
-    pageSize: 5,
-  });
-  const { data: questionsResult } = await getQuestions({
-    filter: "popular",
-    pageSize: 5,
-  });
-  const { tags } = data || {};
+  const [{ data: tagResult }, { data: questionsResult }] = await Promise.all([
+    getTags({
+      filter: "popular",
+      pageSize: 5,
+    }),
+    getQuestions({
+      filter: "popular",
+      pageSize: 5,
+    }),
+  ]);
+
+  const { tags } = tagResult || {};
   const { questions } = questionsResult || {};
   return (
     <section
