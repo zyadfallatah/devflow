@@ -1,9 +1,9 @@
 import ROUTES from "@/constants/routes";
 import Image from "next/image";
 import Link from "next/link";
-import { title } from "process";
 import React from "react";
 import TagCard from "../cards/TagCard";
+import { getTags } from "@/lib/actions/tag.action";
 
 const topQuesitons = [
   { _id: "1", title: "How to create custom hook in react" },
@@ -13,15 +13,12 @@ const topQuesitons = [
   { _id: "5", title: "How to use react context" },
 ];
 
-const popularTags = [
-  { _id: "1", name: "react", question: 5 },
-  { _id: "2", name: "javascript", question: 3 },
-  { _id: "3", name: "nextjs", question: 2 },
-  { _id: "4", name: "tailwindcss", question: 1 },
-  { _id: "5", name: "typescript", question: 1 },
-];
-
-const RightSidebar = () => {
+const RightSidebar = async () => {
+  const { data, success, error } = await getTags({
+    filter: "popular",
+    pageSize: 5,
+  });
+  const { tags } = data || {};
   return (
     <section
       className="pt-36 custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px]
@@ -56,18 +53,15 @@ const RightSidebar = () => {
         <h3 className="h3-bold text-dark200_light900">Popular Tags</h3>
 
         <div className="mt-7 flex flex-col gap-4">
-          {popularTags.map(({ _id, name, question }) => {
-            return (
-              <TagCard
-                key={_id}
-                _id={_id}
-                name={name}
-                questions={question}
-                showCount
-                compact
-              />
-            );
-          })}
+          {!tags && (
+            <p className="body-medium text-dark500_light700">No tags</p>
+          )}
+          {tags &&
+            tags.map((tag) => {
+              return (
+                <TagCard key={tag._id} {...tag} compact isButton showCount />
+              );
+            })}
         </div>
       </div>
     </section>
