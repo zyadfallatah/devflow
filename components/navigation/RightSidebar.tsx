@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import TagCard from "../cards/TagCard";
 import { getTags } from "@/lib/actions/tag.action";
+import { getQuestions } from "@/lib/actions/question.action";
 
 const topQuesitons = [
   { _id: "1", title: "How to create custom hook in react" },
@@ -14,11 +15,16 @@ const topQuesitons = [
 ];
 
 const RightSidebar = async () => {
-  const { data, success, error } = await getTags({
+  const { data } = await getTags({
+    filter: "popular",
+    pageSize: 5,
+  });
+  const { data: questionsResult } = await getQuestions({
     filter: "popular",
     pageSize: 5,
   });
   const { tags } = data || {};
+  const { questions } = questionsResult || {};
   return (
     <section
       className="pt-36 custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px]
@@ -28,24 +34,30 @@ const RightSidebar = async () => {
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
 
         <div className="mt-7 flex w-full flex-col gap-[30px]">
-          {topQuesitons.map(({ _id, title }) => {
-            return (
-              <Link
-                key={_id}
-                href={ROUTES.PROFILE(_id)}
-                className="flex cursor-pointer items-center justify-between gap-7"
-              >
-                <p className="body-medium text-dark500_light700">{title}</p>
-                <Image
-                  src="/icons/chevron-right.svg"
-                  alt="chevron"
-                  width={20}
-                  height={20}
-                  className="invert-colors"
-                />
-              </Link>
-            );
-          })}
+          {!questions && (
+            <p className="body-medium text-dark500_light700">No questions</p>
+          )}
+          {questions &&
+            questions.map(({ _id, title }) => {
+              return (
+                <Link
+                  key={_id}
+                  href={ROUTES.QUESTION(_id)}
+                  className="flex cursor-pointer items-center justify-between gap-7"
+                >
+                  <p className="body-medium text-dark500_light700 line-clamp-1">
+                    {title}
+                  </p>
+                  <Image
+                    src="/icons/chevron-right.svg"
+                    alt="chevron"
+                    width={20}
+                    height={20}
+                    className="invert-colors"
+                  />
+                </Link>
+              );
+            })}
         </div>
       </div>
 
