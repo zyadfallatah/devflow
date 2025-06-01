@@ -36,7 +36,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     questionId: id,
     page: 1,
     pageSize: 10,
-    sort: "latest",
+    filter: "latest",
   });
 
   after(async () => {

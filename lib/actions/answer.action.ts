@@ -14,6 +14,7 @@ import mongoose from "mongoose";
 import Question from "@/database/question.model";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
+import { filter } from "@mdxeditor/editor";
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -80,13 +81,19 @@ export async function getAnswers(params: GetAnswersParams): Promise<
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { questionId, page = 1, pageSize = 10, sort } = validationResult.params;
+  const {
+    questionId,
+    page = 1,
+    pageSize = 10,
+    sort,
+    filter,
+  } = validationResult.params;
   const skip = (Number(page) - 1) * pageSize;
   const limit = Number(pageSize);
 
   let sortCriteria = {};
 
-  switch (sort) {
+  switch (filter) {
     case "latest":
       sortCriteria = { createdAt: -1 };
       break;

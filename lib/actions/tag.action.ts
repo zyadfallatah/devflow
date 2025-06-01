@@ -48,7 +48,7 @@ export async function getTags(
   }
 
   let sortCriteria = {};
-  switch (sort) {
+  switch (filter) {
     case "popular":
       sortCriteria = { questions: -1 };
       break;

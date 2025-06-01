@@ -253,16 +253,16 @@ export async function getQuestions(
 
   let sortCriteria = {};
 
-  switch (sort) {
+  switch (filter) {
     case "newest":
       sortCriteria = { createdAt: -1 };
       break;
     case "unanswered":
       filterQuery.answers = 0;
-      sortCriteria = { createAt: -1 };
+      sortCriteria = { createdAt: -1 };
       break;
     case "popular":
-      sortCriteria = { upvotes: -1 };
+      sortCriteria = { upvotes: -1, views: -1 };
       break;
     default:
       sortCriteria = { createdAt: -1 };
