@@ -31,6 +31,7 @@ interface Answer {
   createdAt: Date;
   upvotes: number;
   downvotes: number;
+  question: string;
 }
 
 type ActionResponse<T = null> = {
