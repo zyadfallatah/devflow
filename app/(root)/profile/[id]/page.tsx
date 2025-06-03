@@ -5,6 +5,7 @@ import {
   getUser,
   getUserAnswers,
   getUserQuestions,
+  getUserTopTags,
 } from "@/lib/actions/user.action";
 import { RouteParams } from "@/types/global";
 import { notFound } from "next/navigation";
@@ -15,10 +16,11 @@ import { Button } from "@/components/ui/button";
 import Stats from "@/components/user/Stats";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataRenderer from "@/components/DataRenderer";
-import { EMPTY_ANSWERS, EMPTY_QUESTION } from "@/constants/states";
+import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from "@/constants/states";
 import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/Pagination";
 import AnswerCard from "@/components/cards/AnswerCard";
+import TagCard from "@/components/cards/TagCard";
 
 const Profile = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -46,6 +48,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 2,
   });
+
   const {
     success: userAnswersSuccess,
     data: userAnswersData,
@@ -56,8 +59,15 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
     pageSize: Number(pageSize) || 2,
   });
 
+  const {
+    success: userTagsSuccess,
+    data: userTagsData,
+    error: userTagsError,
+  } = await getUserTopTags({ userId: id });
+
   const { questions, isNext: hasMoreQuestions } = userQuestionsData || {};
   const { answers, isNext: hasMoreAnswers } = userAnswersData || {};
+  const { tags } = userTagsData || {};
 
   return (
     <>
@@ -185,7 +195,28 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
         <div className="flex w-full min-w-[250px] flex-1 flex-col mx-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tech</h3>
           <div className="mt-7 flex flex-col gap-4">
-            <p>List of tags</p>
+            <DataRenderer
+              data={tags}
+              success={userTagsSuccess}
+              error={userTagsError}
+              empty={{
+                title: EMPTY_TAGS.title,
+                message: EMPTY_TAGS.message,
+              }}
+              render={(tags) => (
+                <div className="flex w-full flex-col gap-6">
+                  {tags.map((tag) => (
+                    <TagCard
+                      key={tag._id}
+                      {...tag}
+                      compact
+                      showCount
+                      questions={tag.count}
+                    />
+                  ))}
+                </div>
+              )}
+            />
           </div>
         </div>
       </section>
