@@ -1,3 +1,4 @@
+import { IInteraction } from "@/database/interaction.model";
 import { PaginatedSearchParams } from "./global";
 
 interface SignInWithOAuthParams {
@@ -91,4 +92,26 @@ interface GetUserTagsParams {
 interface DeleteUserPostParams {
   type: "question" | "answer";
   targetId: string;
+}
+
+interface CreateInteractionParams {
+  action:
+    | "view"
+    | "upvote"
+    | "downvote"
+    | "bookmark"
+    | "post"
+    | "edit"
+    | "delete"
+    | "search";
+  actionId: string;
+  authorId: string;
+  actionTarget: "question" | "answer";
+}
+
+interface UpdateReputationParams {
+  interaction: IInteraction;
+  session: mongoose.ClientSession;
+  performerId: string;
+  authorId: string;
 }
