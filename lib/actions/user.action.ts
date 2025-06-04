@@ -11,6 +11,7 @@ import {
 } from "@/types/global";
 import action from "../handlers/action";
 import {
+  DeleteUserPostSchema,
   GetUserAnswersSchema,
   GetUserQuestionsSchema,
   GetUserSchema,
@@ -19,13 +20,27 @@ import {
 } from "../validation";
 import handleError from "../handlers/error";
 import { FilterQuery, PipelineStage, Types } from "mongoose";
-import { Answer, Question, User } from "@/database";
 import {
+  Answer,
+  Collection,
+  Question,
+  Tag,
+  TagQuestion,
+  User,
+} from "@/database";
+import {
+  DeleteUserPostParams,
   GetUserAnswersParams,
   GetUserParams,
   GetUserQuestionsParams,
   GetUserTagsParams,
 } from "@/types/action";
+import { auth } from "@/auth";
+import { NotFoundError, UnauthorizedError } from "../http-errors";
+import ROUTES from "@/constants/routes";
+import { revalidatePath } from "next/cache";
+import mongoose from "mongoose";
+import Vote from "@/database/vote.model";
 
 export async function getUsers(
   params: PaginatedSearchParams
@@ -258,5 +273,71 @@ export async function getUserTopTags(params: GetUserTagsParams): Promise<
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function deleteUserPost(
+  params: DeleteUserPostParams
+): Promise<ActionResponse> {
+  const validationParams = await action({
+    params,
+    schema: DeleteUserPostSchema,
+    authorize: true,
+  });
+  if (validationParams instanceof Error) {
+    return handleError(validationParams) as ErrorResponse;
+  }
+
+  const { type, targetId } = validationParams.params;
+  const session = await auth();
+  const dbSession = await mongoose.startSession();
+  const userId = session?.user?.id!;
+
+  const Model = type === "question" ? Question : Answer;
+
+  dbSession.startTransaction();
+  try {
+    const post = await Model.findOne({ _id: targetId });
+    if (!post) throw new NotFoundError(`${type}`);
+
+    if (post.author._id.toString() !== userId)
+      throw new UnauthorizedError("user");
+
+    await Model.deleteOne({ _id: targetId }).session(dbSession);
+
+    if (type === "answer") {
+      await Question.updateOne(
+        { _id: post.question },
+        { $inc: { answers: -1 } }
+      ).session(dbSession);
+      await Vote.deleteMany({
+        actionId: targetId,
+        actionType: "answer",
+      }).session(dbSession);
+    } else {
+      await Collection.deleteMany({ question: targetId }).session(dbSession);
+      await TagQuestion.deleteMany({ question: targetId }).session(dbSession);
+      await Answer.deleteMany({ question: targetId }).session(dbSession);
+      await Tag.updateMany(
+        { _id: { $in: post.tags } },
+        { $inc: { questions: -1 } },
+        { session: dbSession }
+      );
+      await Vote.deleteMany({
+        actionId: targetId,
+        actionType: "question",
+      }).session(dbSession);
+    }
+
+    await dbSession.commitTransaction();
+    revalidatePath(ROUTES.PROFILE(userId));
+    return {
+      success: true,
+    };
+  } catch (error) {
+    dbSession.abortTransaction;
+    return handleError(error) as ErrorResponse;
+  } finally {
+    dbSession.endSession();
   }
 }

@@ -73,7 +73,6 @@ const AnswerCard = ({
           </Suspense>
         </div>
       </div>
-
       <Preview content={content} />
 
       {showReadMore && (
