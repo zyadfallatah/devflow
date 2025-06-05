@@ -15,7 +15,7 @@ import {
 } from "../validation";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import mongoose, { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery, Types } from "mongoose";
 import Question from "@/database/question.model";
 import Tag, { ITag } from "@/database/tag.model";
 import TagQuestion from "@/database/tag-question.model";
@@ -26,9 +26,12 @@ import {
   EditQuestionParams,
   GetQuestionParams,
   IncrementViewsParams,
+  RecommendationParams,
 } from "@/types/action";
 import { createInteraction } from "./interaction.action";
 import { after } from "next/server";
+import { Interaction } from "@/database";
+import { auth } from "@/auth";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -229,6 +232,55 @@ export async function getQuestion(
   }
 }
 
+export async function getRecommendedQuestions(params: RecommendationParams) {
+  const { userId, query, skip, limit } = params;
+  const interaction = await Interaction.find({
+    user: new Types.ObjectId(userId),
+    actionType: "question",
+    action: { $in: ["upvote", "view", "bookmark", "post"] },
+  })
+    .sort({ createdAt: -1 })
+    .limit(50)
+    .lean();
+
+  const questionIds = interaction.map((i) => i.actionId);
+  const interactedQuestions = await Question.find({
+    _id: { $in: questionIds },
+  }).select("tags");
+
+  const allTags = interactedQuestions.flatMap((q) =>
+    q.tags.map((tag: Types.ObjectId) => tag.toString())
+  );
+
+  const uniqueTags = [...new Set(allTags)];
+
+  const recommendedQuery: FilterQuery<QuestionType> = {
+    _id: { $nin: questionIds },
+    author: { $ne: new Types.ObjectId(userId) },
+    tags: { $in: uniqueTags.map((tag) => new Types.ObjectId(tag)) },
+  };
+
+  if (query) {
+    recommendedQuery.$or = [
+      { title: { $regex: new RegExp(query, "i") } },
+      { content: { $regex: new RegExp(query, "i") } },
+    ];
+  }
+  const total = await Question.countDocuments(recommendedQuery);
+  const questions = await Question.find(recommendedQuery)
+    .populate("tags", "name")
+    .populate("author", "name image")
+    .sort({ upvotes: -1, views: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  return {
+    questions: JSON.parse(JSON.stringify(questions)),
+    isNext: total > skip + questions.length,
+  };
+}
+
 export async function getQuestions(
   params: PaginatedSearchParams
 ): Promise<ActionResponse<{ questions: QuestionType[]; isNext: boolean }>> {
@@ -240,20 +292,28 @@ export async function getQuestions(
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
   }
-  const {
-    page = 1,
-    pageSize = 10,
-    query,
-    filter,
-    sort,
-  } = validationResult.params!;
+  const { page = 1, pageSize = 10, query, filter } = validationResult.params!;
   const skip = (Number(page) - 1) * pageSize;
   const limit = Number(pageSize);
 
   const filterQuery: FilterQuery<QuestionType> = {};
 
   if (filter === "recommended") {
-    return { success: true, data: { questions: [], isNext: false } };
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId)
+      return { success: true, data: { questions: [], isNext: false } };
+
+    const recommended = await getRecommendedQuestions({
+      userId,
+      query,
+      skip,
+      limit,
+    });
+    return {
+      success: true,
+      data: recommended,
+    };
   }
 
   if (query) {

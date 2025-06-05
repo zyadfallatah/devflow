@@ -24,6 +24,7 @@ import { FilterQuery, PipelineStage, Types } from "mongoose";
 import {
   Answer,
   Collection,
+  Interaction,
   Question,
   Tag,
   TagQuestion,
