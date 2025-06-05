@@ -127,11 +127,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
           )}
         </div>
       </section>
-      <Stats
-        totalQuestions={totalQuestions}
-        totalAnswers={totalAnswers}
-        badges={{ GOLD: 0, SILVER: 0, BRONZE: 0 }}
-      />
+      <Stats userId={user._id} />
 
       <section className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-[2]">

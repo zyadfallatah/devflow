@@ -1,13 +1,11 @@
+import { getUserStats } from "@/lib/actions/user.action";
 import { formatNumber } from "@/lib/utils";
 import { BadgeCounts } from "@/types/global";
 import Image from "next/image";
-import { title } from "process";
 import React from "react";
 
 interface Props {
-  totalQuestions: number;
-  totalAnswers: number;
-  badges: BadgeCounts;
+  userId: string;
 }
 
 interface StatsCardProps {
@@ -31,7 +29,11 @@ const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
   );
 };
 
-const Stats = ({ totalQuestions, totalAnswers, badges }: Props) => {
+const Stats = async ({ userId }: Props) => {
+  const userStats = await getUserStats({ userId });
+  if (!userStats.success || !userStats.data) return <h1>No Data</h1>;
+  const { totalQuestions, totalAnswers, badges } = userStats.data || {};
+
   return (
     <div className="mt-4">
       <h4 className="h3-semibold text-dark200_light900">Stats</h4>

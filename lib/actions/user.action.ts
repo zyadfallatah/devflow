@@ -3,6 +3,7 @@
 import {
   ActionResponse,
   Answer as AnswerType,
+  BadgeCounts,
   ErrorResponse,
   PaginatedSearchParams,
   Question as QuestionType,
@@ -41,6 +42,7 @@ import ROUTES from "@/constants/routes";
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
 import Vote from "@/database/vote.model";
+import { assignBadges } from "../utils";
 
 export async function getUsers(
   params: PaginatedSearchParams
@@ -339,5 +341,71 @@ export async function deleteUserPost(
     return handleError(error) as ErrorResponse;
   } finally {
     dbSession.endSession();
+  }
+}
+
+export async function getUserStats(params: GetUserParams): Promise<
+  ActionResponse<{
+    totalQuestions: number;
+    totalAnswers: number;
+    badges: BadgeCounts;
+  }>
+> {
+  const validationParams = await action({
+    params,
+    schema: GetUserSchema,
+  });
+
+  if (validationParams instanceof Error) {
+    return handleError(validationParams) as ErrorResponse;
+  }
+
+  const { userId } = validationParams.params;
+
+  try {
+    const [questionStats] = await Question.aggregate([
+      { $match: { author: new Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
+          upvotes: { $sum: "$upvotes" },
+          views: { $sum: "$views" },
+        },
+      },
+    ]);
+
+    const [answerStats] = await Answer.aggregate([
+      { $match: { author: new Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
+          upvotes: { $sum: "$upvotes" },
+          views: { $sum: "$views" },
+        },
+      },
+    ]);
+
+    const badges = assignBadges({
+      criteria: [
+        { type: "ANSWER_COUNT", count: answerStats.count },
+        { type: "QUESTION_COUNT", count: questionStats.count },
+        { type: "QUESTION_UPVOTES", count: questionStats.upvotes },
+        { type: "ANSWER_UPVOTES", count: answerStats.upvotes },
+        { type: "TOTAL_VIEWS", count: questionStats.views + answerStats.views },
+      ],
+    });
+
+    return {
+      success: true,
+      data: {
+        totalQuestions: questionStats.count,
+        totalAnswers: answerStats.count,
+        badges,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
 }

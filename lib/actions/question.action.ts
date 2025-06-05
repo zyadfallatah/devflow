@@ -27,6 +27,8 @@ import {
   GetQuestionParams,
   IncrementViewsParams,
 } from "@/types/action";
+import { createInteraction } from "./interaction.action";
+import { after } from "next/server";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -76,6 +78,16 @@ export async function createQuestion(
       { $push: { tags: { $each: tagIds } } },
       { session }
     );
+
+    after(async () => {
+      await createInteraction({
+        action: "post",
+        actionId: question._id.toString(),
+        actionTarget: "question",
+        authorId: userId!,
+      });
+    });
+
     await session.commitTransaction();
     return {
       success: true,

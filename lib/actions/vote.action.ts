@@ -20,6 +20,8 @@ import Vote from "@/database/vote.model";
 import { Answer, Question } from "@/database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
+import { after } from "next/server";
+import { createInteraction } from "./interaction.action";
 
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -85,6 +87,14 @@ export async function createVote(
       actionId: targetId,
       actionType: targetType,
     }).session(session);
+
+    const Model = targetType === "question" ? Question : Answer;
+    const contentDoc = await Model.findById(targetId).session(session);
+    if (!contentDoc) {
+      throw new Error("Content not found");
+    }
+    const contentAuthorId = contentDoc.author.toString();
+
     if (existingVote) {
       if (existingVote.voteType === voteType) {
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
@@ -97,6 +107,14 @@ export async function createVote(
           },
           session
         );
+        after(async () => {
+          await createInteraction({
+            action: "downvote",
+            actionId: targetId,
+            actionTarget: targetType,
+            authorId: contentAuthorId!,
+          });
+        });
       } else {
         await Vote.findByIdAndUpdate(
           existingVote._id,
@@ -122,6 +140,14 @@ export async function createVote(
           session
         );
       }
+      after(async () => {
+        await createInteraction({
+          action: existingVote.voteType,
+          actionId: targetId,
+          actionTarget: targetType,
+          authorId: contentAuthorId!,
+        });
+      });
     } else {
       await Vote.create(
         [
@@ -143,6 +169,14 @@ export async function createVote(
         },
         session
       );
+      after(async () => {
+        await createInteraction({
+          action: "upvote",
+          actionId: targetId,
+          actionTarget: targetType,
+          authorId: contentAuthorId!,
+        });
+      });
     }
 
     await session.commitTransaction();
