@@ -32,6 +32,7 @@ import { createInteraction } from "./interaction.action";
 import { after } from "next/server";
 import { Interaction } from "@/database";
 import { auth } from "@/auth";
+import { cache } from "react";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -202,36 +203,37 @@ export async function editQuestion(
   }
 }
 
-// Don't Call this function in client component
-export async function getQuestion(
-  params: GetQuestionParams
-): Promise<ActionResponse<QuestionType>> {
-  const validationResult = await action({
-    params,
-    schema: GetQuestionSchema,
-  });
-  if (validationResult instanceof Error) {
-    return handleError(validationResult) as ErrorResponse;
+export const getQuestion = cache(
+  // Don't Call this function in client component
+  async function getQuestion(
+    params: GetQuestionParams
+  ): Promise<ActionResponse<QuestionType>> {
+    const validationResult = await action({
+      params,
+      schema: GetQuestionSchema,
+    });
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { questionId } = validationResult.params!;
+
+    try {
+      const question = await Question.findById(questionId)
+        .populate("tags")
+        .populate("author", "_id name image");
+
+      if (!question) throw new Error("Question not found");
+
+      return {
+        success: true,
+        data: JSON.parse(JSON.stringify(question)),
+      };
+    } catch (error) {
+      return handleError(error) as ErrorResponse;
+    }
   }
-
-  const { questionId } = validationResult.params!;
-
-  try {
-    const question = await Question.findById(questionId)
-      .populate("tags")
-      .populate("author", "_id name image");
-
-    if (!question) throw new Error("Question not found");
-
-    return {
-      success: true,
-      data: JSON.parse(JSON.stringify(question)),
-    };
-  } catch (error) {
-    return handleError(error) as ErrorResponse;
-  }
-}
-
+);
 export async function getRecommendedQuestions(params: RecommendationParams) {
   const { userId, query, skip, limit } = params;
   const interaction = await Interaction.find({
