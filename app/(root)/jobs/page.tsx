@@ -1,20 +1,22 @@
 import JobCard from "@/components/cards/JobCard";
 import JobsFilter from "@/components/filters/JobsFilter";
 import Pagination from "@/components/Pagination";
-import { getJobs } from "@/lib/actions/jobs.action";
+import { getJobs, getLocations } from "@/lib/actions/jobs.action";
 import { Job, RouteParams } from "@/types/global";
 import React from "react";
 
 const Jobs = async ({ searchParams }: RouteParams) => {
-  const { query, page, pageSize } = await searchParams;
+  const { locationCodename, query, page, pageSize } = await searchParams;
   const parsedPage = Number(page) || 1;
   const parsedPageSize = Number(pageSize) || 10;
   const { data, success, error } = await getJobs({
-    locationCodename: "",
+    locationCodename: locationCodename || "",
     query: query || "",
     page: parsedPage,
     pageSize: parsedPageSize,
   });
+  const { data: countriesList, success: successCountries } =
+    await getLocations("sa");
 
   const { jobs, isNext } = data!;
 
@@ -26,7 +28,7 @@ const Jobs = async ({ searchParams }: RouteParams) => {
     <>
       <h1 className="h1-bold text-dark100_light900">Jobs</h1>
       <div className="flex">
-        <JobsFilter />
+        <JobsFilter countriesList={countriesList!} />
       </div>
       <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
         {jobs?.length > 0 ? (
