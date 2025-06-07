@@ -122,3 +122,7 @@ interface RecommendationParams {
   skip: number;
   limit: number;
 }
+
+interface GetJobsParams extends Omit<PaginatedSearchParams, "filter" | "sort"> {
+  locationCodename?: string;
+}

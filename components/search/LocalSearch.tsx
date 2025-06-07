@@ -21,6 +21,7 @@ const LocalSearch = ({
   iconPostion = "left",
   otherClasses,
 }: Props) => {
+  const [loading, setLoading] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,6 +30,7 @@ const LocalSearch = ({
   const [searchQuery, setSearchQuery] = useState(query);
 
   useEffect(() => {
+    setLoading(true);
     const debounce = setTimeout(() => {
       if (searchQuery) {
         const newUrl = formUrlQuery({
@@ -38,6 +40,7 @@ const LocalSearch = ({
         });
 
         router.push(newUrl, { scroll: false });
+        setLoading(false);
       } else {
         if (pathname === route) {
           const newUrl = removeKeyFromUrlQuery({
@@ -46,6 +49,7 @@ const LocalSearch = ({
           });
 
           router.push(newUrl, { scroll: false });
+          setLoading(false);
         }
       }
     }, 1000);
@@ -84,6 +88,15 @@ const LocalSearch = ({
           className="cursor-pointer"
           width={24}
           height={24}
+        />
+      )}
+      {loading && (
+        <Image
+          src="/icons/currency-dollar-circle.svg"
+          alt="loader"
+          width={24}
+          height={24}
+          className="animate-spin"
         />
       )}
     </div>

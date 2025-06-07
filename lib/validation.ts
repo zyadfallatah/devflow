@@ -250,3 +250,7 @@ export const CreateInteractionSchema = z.object({
   actionId: z.string().min(1),
   authorId: z.string().min(1),
 });
+
+export const GetJobsSchema = PaginatedSearchParamsSchema.extend({
+  locationCodename: z.string().optional(),
+});
