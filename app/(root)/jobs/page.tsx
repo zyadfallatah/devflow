@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import { getJobs, getLocations } from "@/lib/actions/jobs.action";
 import { Job, RouteParams } from "@/types/global";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 
