@@ -8,6 +8,7 @@ import Credentials from "next-auth/providers/credentials";
 import { SignInSchema } from "./lib/validation";
 import { IUser } from "./database/user.model";
 import bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

@@ -17,7 +17,6 @@ const NavLinks = ({
   isMobileNav?: boolean;
   userId?: string;
 }) => {
-  const session = useSession();
   const pathname = usePathname();
 
   return (
@@ -27,16 +26,15 @@ const NavLinks = ({
           (pathname.includes(item.route) && item.route.length > 1) ||
           pathname === item.route;
 
-        if (item.route === "/profile") {
+        if (
+          item.route.startsWith("/profile") &&
+          item.route !== ROUTES.PROFILE(userId || "n")
+        ) {
           if (userId) item.route = `${item.route}/${userId}`;
           else return null;
         }
 
-        if (
-          item.route === ROUTES.COLLECTION &&
-          session.status === "unauthenticated"
-        )
-          return null;
+        if (item.route === ROUTES.COLLECTION && !userId) return null;
 
         const LinkComponent = (
           <Link

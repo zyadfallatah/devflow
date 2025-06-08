@@ -5,6 +5,8 @@ import ROUTES from "@/constants/routes";
 import Link from "next/link";
 import { auth, signOut } from "@/auth";
 import { LogOut } from "lucide-react";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const DesktopNavigation = async () => {
   const session = await auth();
@@ -23,7 +25,10 @@ const DesktopNavigation = async () => {
           <form
             action={async () => {
               "use server";
-              await signOut();
+              await signOut({
+                redirect: true,
+                redirectTo: "/",
+              });
             }}
           >
             <Button

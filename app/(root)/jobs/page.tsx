@@ -1,11 +1,17 @@
+import { auth } from "@/auth";
 import JobCard from "@/components/cards/JobCard";
 import JobsFilter from "@/components/filters/JobsFilter";
 import Pagination from "@/components/Pagination";
+import { Button } from "@/components/ui/button";
+import ROUTES from "@/constants/routes";
 import { getJobs, getLocations } from "@/lib/actions/jobs.action";
 import { Job, RouteParams } from "@/types/global";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import React from "react";
 
 const Jobs = async ({ searchParams }: RouteParams) => {
+  const session = await auth();
   const { locationCodename, query, page, pageSize } = await searchParams;
   const parsedPage = Number(page) || 1;
   const parsedPageSize = Number(pageSize) || 10;
@@ -15,6 +21,20 @@ const Jobs = async ({ searchParams }: RouteParams) => {
     page: parsedPage,
     pageSize: parsedPageSize,
   });
+
+  if (!session?.user?.id) {
+    return (
+      <div className="flex flex-col justify-center items-center gap-4 min-h-[calc(100vh-80px)]">
+        <h2 className="h2-bold text-dark100_light900">
+          Please Sign In to See Jobs
+        </h2>
+        <Link href={ROUTES.SIGN_IN}>
+          <Button className="primary-gradient text-light-900">Sign In</Button>
+        </Link>
+      </div>
+    );
+  }
+
   const { data: countriesList, success: successCountries } =
     await getLocations("sa");
 
