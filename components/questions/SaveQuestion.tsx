@@ -1,9 +1,11 @@
 "use client";
 
+import ROUTES from "@/constants/routes";
 import { toggleSaveCollection } from "@/lib/actions/collection.action";
 import { ActionResponse } from "@/types/global";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import { toast } from "sonner";
 
@@ -13,6 +15,7 @@ interface Props {
 }
 
 const SaveQuestion = ({ questionId, hasSavedQuestionPromise }: Props) => {
+  const router = useRouter();
   const session = useSession();
   const userId = session?.data?.user?.id;
 
@@ -39,6 +42,7 @@ const SaveQuestion = ({ questionId, hasSavedQuestionPromise }: Props) => {
       const { saved } = data;
 
       toast.success(`Question ${saved ? "saved" : "unsaved"} successfully`);
+      !saved && router.push(ROUTES.COLLECTION);
     } catch (error) {
       toast.error("Error", {
         description:

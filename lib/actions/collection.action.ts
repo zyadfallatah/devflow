@@ -129,6 +129,16 @@ export async function getSavedQuestions(
   };
 
   try {
+    const userCollectionsCount = await Collection.countDocuments({
+      author: new mongoose.Types.ObjectId(userId),
+    });
+    if (userCollectionsCount === 0) {
+      return {
+        success: true,
+        data: { collection: [], isNext: false },
+      };
+    }
+
     const pipeline: PipelineStage[] = [
       { $match: { author: new mongoose.Types.ObjectId(userId) } },
       {
