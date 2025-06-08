@@ -254,3 +254,7 @@ export const CreateInteractionSchema = z.object({
 export const GetJobsSchema = PaginatedSearchParamsSchema.extend({
   locationCodename: z.string().optional(),
 });
+
+export const GlobalSearchSchema = z.object({
+  query: z.string().min(1, { message: "Search query is required" }),
+});
