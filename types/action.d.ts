@@ -75,6 +75,14 @@ interface GetUserParams {
   userId: string;
 }
 
+interface UpdateUserParams {
+  userId: string;
+  bio?: string;
+  image?: string;
+  location?: string;
+  portofolio?: string;
+}
+
 interface GetUserQuestionsParams
   extends Omit<PaginatedSearchParams, "filter" | "query" | "sort"> {
   userId: string;

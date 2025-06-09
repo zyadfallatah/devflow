@@ -239,6 +239,17 @@ export const GetUserTagsSchema = z.object({
   userId: z.string().min(1, { message: "User ID is required" }),
 });
 
+export const UpdateUserSchema = z.object({
+  userId: z.string().min(1, { message: "User ID is required" }),
+  bio: z.string().optional(),
+  image: z.string().optional(),
+  location: z.string().optional(),
+  portofolio: z
+    .string()
+    .url({ message: "Please provide a valid URL." })
+    .optional(),
+});
+
 export const DeleteUserPostSchema = z.object({
   type: z.enum(["question", "answer"], { message: "Invalid type" }),
   targetId: z.string().min(1, { message: "Target ID is required" }),

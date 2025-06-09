@@ -18,6 +18,7 @@ import {
   GetUserSchema,
   GetUserTagsSchema,
   PaginatedSearchParamsSchema,
+  UpdateUserSchema,
 } from "../validation";
 import handleError from "../handlers/error";
 import { FilterQuery, PipelineStage, Types } from "mongoose";
@@ -36,6 +37,7 @@ import {
   GetUserParams,
   GetUserQuestionsParams,
   GetUserTagsParams,
+  UpdateUserParams,
 } from "@/types/action";
 import { auth } from "@/auth";
 import { NotFoundError, UnauthorizedError } from "../http-errors";
@@ -404,6 +406,46 @@ export async function getUserStats(params: GetUserParams): Promise<
         totalQuestions: questionStats.count,
         totalAnswers: answerStats.count,
         badges,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function updateUser(
+  params: UpdateUserParams
+): Promise<ActionResponse<{ user: UserType }>> {
+  const validationParams = await action({
+    params,
+    schema: UpdateUserSchema,
+    authorize: true,
+  });
+  if (validationParams instanceof Error) {
+    return handleError(validationParams) as ErrorResponse;
+  }
+
+  const { userId, bio, image, location, portofolio } = validationParams.params;
+  const currentUserId = validationParams.session?.user?.id;
+
+  try {
+    if (userId !== currentUserId) {
+      throw new UnauthorizedError("user");
+    }
+    const user = await User.findById(userId);
+    if (!user) throw new NotFoundError("User");
+
+    if (bio) user.bio = bio;
+    if (image) user.image = image;
+    if (location) user.location = location;
+    if (portofolio) user.portofolio = portofolio;
+
+    await user.save();
+
+    return {
+      success: true,
+      data: {
+        user: JSON.parse(JSON.stringify(user)),
       },
     };
   } catch (error) {
