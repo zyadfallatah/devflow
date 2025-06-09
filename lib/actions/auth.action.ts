@@ -9,6 +9,7 @@ import User from "@/database/user.model";
 import bcrypt from "bcryptjs";
 import Account from "@/database/account.model";
 import { signIn } from "@/auth";
+import { AuthCredentials } from "@/types/action";
 
 export async function signUpWithCredentials(
   params: AuthCredentials

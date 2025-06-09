@@ -83,6 +83,13 @@ interface UpdateUserParams {
   portofolio?: string;
 }
 
+interface GetUploadAuthParams {
+  publicKey: string;
+  token: string;
+  signature: string;
+  expire: number;
+}
+
 interface GetUserQuestionsParams
   extends Omit<PaginatedSearchParams, "filter" | "query" | "sort"> {
   userId: string;

@@ -6,10 +6,13 @@ import MobileNavigation from "./MobileNavigation";
 import { auth } from "@/auth";
 import UserAvatar from "@/components/UserAvatar";
 import GlobalSearch from "@/components/search/GlobalSearch";
+import { getUser } from "@/lib/actions/user.action";
 
 const NavBar = async () => {
   const session = await auth();
-  const user = session?.user;
+  const userId = session?.user?.id!;
+
+  const { data: { user } = {} } = await getUser({ userId });
   return (
     <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12">
       <Link href="/" className="flex items-center gap-1">
@@ -29,7 +32,7 @@ const NavBar = async () => {
       <div className="flex-between gap-5">
         <Theme />
         {user && (
-          <UserAvatar id={user.id!} name={user.name!} imageUrl={user.image!} />
+          <UserAvatar id={user._id!} name={user.name!} imageUrl={user.image!} />
         )}
 
         <MobileNavigation />

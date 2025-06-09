@@ -33,6 +33,7 @@ import {
 } from "@/database";
 import {
   DeleteUserPostParams,
+  GetUploadAuthParams,
   GetUserAnswersParams,
   GetUserParams,
   GetUserQuestionsParams,
@@ -46,6 +47,7 @@ import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
 import Vote from "@/database/vote.model";
 import { assignBadges } from "../utils";
+import { getUploadAuthParams } from "@imagekit/next/server";
 
 export async function getUsers(
   params: PaginatedSearchParams
@@ -441,11 +443,36 @@ export async function updateUser(
     if (portofolio) user.portofolio = portofolio;
 
     await user.save();
-
     return {
       success: true,
       data: {
         user: JSON.parse(JSON.stringify(user)),
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getUserUploadImageAuth(): Promise<
+  ActionResponse<GetUploadAuthParams>
+> {
+  const session = await auth();
+  const userId = session?.user?.id;
+  const publicKey = process.env.IMAGEKIT_PUBLIC_KEY!;
+  try {
+    if (!userId) throw new NotFoundError("User");
+    const { token, signature, expire } = getUploadAuthParams({
+      privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
+      publicKey,
+    });
+    return {
+      success: true,
+      data: {
+        token,
+        signature,
+        expire,
+        publicKey,
       },
     };
   } catch (error) {

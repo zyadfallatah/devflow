@@ -1,7 +1,7 @@
 "use client";
 import { UpdateUserParams } from "@/types/action";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import ROUTES from "@/constants/routes";
 import { updateUser } from "@/lib/actions/user.action";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import UploadImage from "./UploadImage";
 interface Params {
   id: string;
   bio?: string;
@@ -89,22 +90,12 @@ const EditUserForm = ({ id, bio, image, location, portofolio }: Params) => {
             </FormItem>
           )}
         />
-        <FormField
+        <Controller
           control={form.control}
           name="image"
+          defaultValue=""
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="h3-bold">
-                Image (To be implemented)
-              </FormLabel>
-              <FormControl>
-                {/* <Input {...field} placeholder="upload image" className="py-6" /> */}
-              </FormControl>
-              <FormDescription>
-                Upload a profile picture. This will be visible to other
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
+            <UploadImage {...field} register={form.register} />
           )}
         />
         <FormField
