@@ -368,29 +368,46 @@ export async function getUserStats(params: GetUserParams): Promise<
   const { userId } = validationParams.params;
 
   try {
-    const [questionStats] = await Question.aggregate([
-      { $match: { author: new Types.ObjectId(userId) } },
-      {
-        $group: {
-          _id: null,
-          count: { $sum: 1 },
-          upvotes: { $sum: "$upvotes" },
-          views: { $sum: "$views" },
-        },
-      },
-    ]);
+    const userQuestions = await Question.countDocuments({ author: userId });
+    const userAnswers = await Answer.countDocuments({ author: userId });
+    let questionStats = {
+      count: 0,
+      upvotes: 0,
+      views: 0,
+    };
+    let answerStats = {
+      count: 0,
+      upvotes: 0,
+      views: 0,
+    };
 
-    const [answerStats] = await Answer.aggregate([
-      { $match: { author: new Types.ObjectId(userId) } },
-      {
-        $group: {
-          _id: null,
-          count: { $sum: 1 },
-          upvotes: { $sum: "$upvotes" },
-          views: { $sum: "$views" },
+    if (userQuestions !== 0) {
+      [questionStats] = await Question.aggregate([
+        { $match: { author: new Types.ObjectId(userId) } },
+        {
+          $group: {
+            _id: null,
+            count: { $sum: 1 },
+            upvotes: { $sum: "$upvotes" },
+            views: { $sum: "$views" },
+          },
         },
-      },
-    ]);
+      ]);
+    }
+
+    if (userAnswers !== 0) {
+      [answerStats] = await Answer.aggregate([
+        { $match: { author: new Types.ObjectId(userId) } },
+        {
+          $group: {
+            _id: null,
+            count: { $sum: 1 },
+            upvotes: { $sum: "$upvotes" },
+            views: { $sum: "$views" },
+          },
+        },
+      ]);
+    }
 
     const badges = assignBadges({
       criteria: [

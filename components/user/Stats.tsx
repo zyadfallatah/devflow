@@ -31,7 +31,7 @@ const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
 
 const Stats = async ({ userId }: Props) => {
   const userStats = await getUserStats({ userId });
-  if (!userStats.success || !userStats.data) return <h1>No Data</h1>;
+  if (!userStats.success) return <h1>No Data</h1>;
   const { totalQuestions, totalAnswers, badges } = userStats.data || {};
 
   return (
@@ -45,30 +45,30 @@ const Stats = async ({ userId }: Props) => {
         >
           <div>
             <p className="paragraph-semibold text-dark200_light900">
-              {formatNumber(totalQuestions)}
+              {formatNumber(totalQuestions || 0)}
             </p>
             <p className="body-medium text-dark400_light700">Questions</p>
           </div>
           <div>
             <p className="paragraph-semibold text-dark200_light900">
-              {formatNumber(totalAnswers)}
+              {formatNumber(totalAnswers || 0)}
             </p>
             <p className="body-medium text-dark400_light700">Answers</p>
           </div>
         </div>
         <StatsCard
           imgUrl="/icons/gold-medal.svg"
-          value={badges.GOLD}
+          value={badges?.GOLD || 0}
           title="Gold Badges"
         />
         <StatsCard
           imgUrl="/icons/silver-medal.svg"
-          value={badges.SILVER}
+          value={badges?.SILVER || 0}
           title="Silver Badges"
         />
         <StatsCard
           imgUrl="/icons/bronze-medal.svg"
-          value={badges.BRONZE}
+          value={badges?.BRONZE || 0}
           title="Bronze Badges"
         />
       </div>

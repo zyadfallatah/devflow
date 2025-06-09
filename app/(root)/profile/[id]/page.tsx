@@ -30,7 +30,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   const loggedInUser = await auth();
   const { success, data, error } = await getUser({ userId: id });
 
-  if (!success || !data) {
+  if (!success) {
     return (
       <div>
         <div className="h1_bold text-dark100_light900">{error?.message}</div>
@@ -38,7 +38,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
     );
   }
 
-  const { user, totalQuestions, totalAnswers } = data;
+  const { user, totalQuestions, totalAnswers } = data!;
   const {
     success: userQuestionsSuccess,
     data: userQuestionsData,
