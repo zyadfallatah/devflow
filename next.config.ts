@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  serverExternalPackages: ["pino", "pino-pretty"],
+  // serverExternalPackages: ["pino", "pino-pretty"],
   transpilePackages: ["next-mdx-remote"],
   eslint: {
     ignoreDuringBuilds: true,
@@ -18,15 +18,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "flagsapi.com" },
       { protocol: "https", hostname: "**" },
     ],
-  },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        "pino-pretty": false,
-      };
-    }
-    return config;
   },
 };
 
