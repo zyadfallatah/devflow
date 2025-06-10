@@ -19,6 +19,15 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        "pino-pretty": false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
