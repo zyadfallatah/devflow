@@ -2,7 +2,7 @@ import pino from "pino";
 
 const isProduction = process.env.NEXT_RUNTIME === "production";
 
-const logger = !isProduction
+const logger = isProduction
   ? pino({
       level: process.env.LOG_LEVEL || "info",
       transport: {
