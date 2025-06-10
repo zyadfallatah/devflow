@@ -47,7 +47,7 @@ const MobileNavigation = async () => {
         <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-center overflow-y-auto">
           <SheetClose asChild>
             <section className="flex h-full flex-col gap-6 pt-16 items-start px-5">
-              <NavLinks isMobileNav />
+              <NavLinks isMobileNav userId={userId} />
             </section>
           </SheetClose>
 
