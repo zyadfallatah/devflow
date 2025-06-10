@@ -61,3 +61,49 @@ cd devflow
 npm install --legacy-peer-deps or --force
 npm run dev
 ```
+
+### Personal Experience
+
+- On deploying the app, i had one inersting error caused by pino-pretty
+
+```bash
+Error: unable to determine transport target for "pino-pretty"
+    at 45740 (.next/server/chunks/9142.js:1:3815)
+    at t (.next/server/webpack-runtime.js:1:190)
+    at 86728 (.next/server/chunks/9142.js:1:7151)
+    at t (.next/server/webpack-runtime.js:1:190)
+    at 92558 (.next/server/chunks/9142.js:1:14252)
+    at t (.next/server/webpack-runtime.js:1:190) {
+  page: '/'
+}
+```
+
+- it took moments to figure out that i need to exclude pino-pretty from server build depolyment
+- But How 🙂
+- I needed to add a whole new .env **_NEXT_RUNTIME_** to deterimne which pino to export
+
+```ts
+import pino from "pino";
+
+const isProduction = process.env.NEXT_RUNTIME === "production";
+
+const logger = isProduction
+  ? pino({
+      level: process.env.LOG_LEVEL || "info",
+      transport: {
+        target: "pino-pretty", // THIS IS EXPLICITLY
+        options: {
+          colorize: true,
+          ignore: "pid,hostname",
+          translateTime: "SYS:standard",
+        },
+      }, // This part is what causing the error
+      formatters: {
+        level: (label) => ({ level: label.toUpperCase() }),
+      },
+      timestamp: pino.stdTimeFunctions.isoTime,
+    })
+  : pino({ level: "info" });
+
+export default logger;
+```
