@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  serverExternalPackages: ["pino"],
+  serverExternalPackages: ["pino", "pino-pretty"],
   transpilePackages: ["next-mdx-remote"],
   eslint: {
     ignoreDuringBuilds: true,
